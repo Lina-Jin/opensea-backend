@@ -1,4 +1,4 @@
-import { Controller, Param,Get, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Param,Get, HttpException, HttpStatus,Post,Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -18,8 +18,15 @@ export class AuthController {
     const authRequest = await this.authService.generateAuthRequest(address);
 
     return {
+      id: authRequest.id,
       message: this.authService.generateSignatureMessage(authRequest),
       expiredAt: authRequest.expiredAt,
     }
+  }
+
+  @Post('verify')
+  async verifySignMessage(@Body() body){
+    const {signature, id} =body
+     return this.authService.verifyAuthRequest(signature, id)
   }
 }
